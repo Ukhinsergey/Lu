@@ -69,13 +69,13 @@ void multmatr(double **&a, double **&b, int n) {
 
 
 void answer(int n, double **&a, double *&b, double *&x) {
-	double **l = new double *[n];
+	/*double **l = new double *[n];
 	double **u = new double *[n];
-	int i,j,k;
 	for(i = 0; i < n; ++i) {
 		l[i] = new double[n];
 		u[i] = new double[n];
-	}
+	}*/
+	int i,j,k;
 	
 	int *ind = new int [n];
 	for (i = 0 ; i < n; ++i) {
@@ -84,16 +84,15 @@ void answer(int n, double **&a, double *&b, double *&x) {
 	double max = 0;
 	for (k = 0 ; k < n; ++k) {
 		for( i = k; i < n; ++i) {
-			l[ind[i]][k] = a[ind[i]][k];
 			for (j = 0; j <= k - 1; ++j) {
-				l[ind[i]][k] -= l[ind[i]][j] * u[ind[j]][k];
+				a[ind[i]][k] -= a[ind[i]][j] * a[ind[j]][k];
 			}
 		}
 		max = 0;
 		int maxind = k;
 		for (i = k ; i < n; ++i) {
-			if (abs(l[ind[i]][k]) > max) {
-				max = l[ind[i]][k];
+			if (abs(a[ind[i]][k]) > max) {
+				max = a[ind[i]][k];
 				maxind = i;
 			}
 		}
@@ -105,11 +104,10 @@ void answer(int n, double **&a, double *&b, double *&x) {
 			return ;
 		}
 		for ( i = k + 1; i < n; ++i) {
-			u[ind[k]][i] = a[ind[k]][i];
 			for (j = 0; j<= k - 1; ++j) {
-				u[ind[k]][i] -= l[ind[k]][j] * u[ind[j]][i];
+				a[ind[k]][i] -= a[ind[k]][j] * a[ind[j]][i];
 			}
-			u[ind[k]][i] /= l[ind[k]][k];
+			a[ind[k]][i] /= a[ind[k]][k];
 		}
 	}
 
@@ -136,9 +134,8 @@ void answer(int n, double **&a, double *&b, double *&x) {
 		}
 
 	}*/
-	printmatr(ind,n);
-	printmatr(l,n);
-	printmatr(u,n);
+	//printmatr(ind,n);
+	//printmatr(a,n);
 	//multmatr(l,u,n);
 }
 
