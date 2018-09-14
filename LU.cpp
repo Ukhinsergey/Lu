@@ -7,7 +7,7 @@
 
 using namespace std;
 const int w = 3;
-const double eps = DBL_EPSILON;
+const double eps = FLT_EPSILON;
 
 void inline freematr(double **&a, int n) {
 	int i;
@@ -47,7 +47,7 @@ void printmatr(T b, int n) {
 }
 
 double func(int i,int j) {
-	return 	i + j ;
+	return 	(i + 1) * (i + 1) * (j + 1)- i;
 }
 
 void multmatr(double **&a, double **&b, int n) {
@@ -84,7 +84,7 @@ void answer(int n, double **&a, double *&b, double *&x) {
 	double max = 0;
 	for (k = 0 ; k < n; ++k) {
 		for( i = k; i < n; ++i) {
-			l[ind[i]][k] = a[i][k];
+			l[ind[i]][k] = a[ind[i]][k];
 			for (j = 0; j <= k - 1; ++j) {
 				l[ind[i]][k] -= l[ind[i]][j] * u[ind[j]][k];
 			}
@@ -100,12 +100,12 @@ void answer(int n, double **&a, double *&b, double *&x) {
 		int t = ind[k];
 		ind[k] = ind[maxind];
 		ind[maxind] = t;
-		if (abs(max) < eps) {
+		if (abs(max) <= eps) {
 			cout << "singular";
 			return ;
 		}
 		for ( i = k + 1; i < n; ++i) {
-			u[ind[k]][i] = a[k][i];
+			u[ind[k]][i] = a[ind[k]][i];
 			for (j = 0; j<= k - 1; ++j) {
 				u[ind[k]][i] -= l[ind[k]][j] * u[ind[j]][i];
 			}
