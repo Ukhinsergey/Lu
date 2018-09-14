@@ -3,9 +3,7 @@
 #include <iomanip> 
 #include <cmath>
 #include <cfloat>
-#include <vector>
-#include <algorithm>
-#include <iterator>
+
 
 using namespace std;
 const int w = 3;
@@ -69,43 +67,44 @@ void multmatr(double **&a, double **&b, int n) {
 
 
 void answer(int n, double **&a, double *&b, double *&x) {
-	/*double **l = new double *[n];
+	double **l = new double *[n];
 	double **u = new double *[n];
-	double sum;*/
-	vector<int> ind;
-	int maxind;
-	int i,j,k;
-	double max = 0;
-	for (k = 0 ; k < n; ++k) {
-		for ( i = k ; i < n ; ++i) {
-			int truei = i;
-			if (find(ind.begin(), ind.end(), i) != ind.end()) {
-				truei = distance(ind.begin(), find(ind.begin(), ind.end(), i));
-			}
-			for (vector<int>::iterator it = ind.begin(); it != ind.end(); ++it) {
-				a[truei][k] -= a[truei][*it] * a[*it][k];
-			}
-		}
-		max = 0;
-		maxind = 0;
-		for (i = 0; i < n ; ++i) {
-			if ((abs(a[i][k]) > max) && (find(ind.begin(), ind.end(), i ) == ind.end()) ){
-				max = a[i][k];
-				maxind = i;
-			}
-		}
-	 	ind.push_back(maxind);
-		if (abs(max) < eps) {
-			cout << "singular" ;
-			return;
-		}
-
-	}
-
-	/*for(i = 0; i < n; ++i) {
+	for(i = 0; i < n; ++i) {
 		l[i] = new double[n];
 		u[i] = new double[n];
 	}
+	
+	int *ind = new int [n];
+	int i,j,k;
+	for (i = 0 ; i < n; ++i) {
+		ind[i] = i;
+	}
+	double max = 0;
+	for (k = 0 ; k < n; ++k) {
+		for( i = k; i < n; ++i) {
+			l[ind[i]][k] = a[i][k];
+			for (j = 0; j <= k - 1; ++j) {
+				l[ind[i]][k] -= l[ind[i]][j] * u[ind[j]][k];
+			}
+		}
+		max = 0;
+		int maxind = k;
+		for (i = k ; i < n; ++i) {
+			if (abs(l[ind[i]][k]) > max) {
+				max = l[ind[i]][k];
+				maxind = i;
+			}
+		}
+		int t = ind[k];
+		ind[k] = ind[maxind];
+		ind[maxind] = t;
+		if (abs(max) < eps) {
+			cout << "singular";
+			return ;
+		}
+	}
+
+	/*
 	for(i = 0 ; i < n; ++i) {
 		l[i][0] = a[i][0];
 		u[0][i] = a[0][i]/l[0][0];
