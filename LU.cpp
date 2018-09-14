@@ -37,7 +37,9 @@ void printmatr(double **a, int n) {
 	}
 	cout << endl;
 }
-void printmatr(double *b, int n) {
+
+template <typename T>
+void printmatr(T b, int n) {
 	int i;
 	for (i = 0; i < n; ++i) {
 		cout << setw(w) << b[i] << endl;
@@ -45,7 +47,7 @@ void printmatr(double *b, int n) {
 }
 
 double func(int i,int j) {
-	return 	(i + 1) * (i + 1) * (j + 1)- i;
+	return 	i + j ;
 }
 
 void multmatr(double **&a, double **&b, int n) {
@@ -69,13 +71,13 @@ void multmatr(double **&a, double **&b, int n) {
 void answer(int n, double **&a, double *&b, double *&x) {
 	double **l = new double *[n];
 	double **u = new double *[n];
+	int i,j,k;
 	for(i = 0; i < n; ++i) {
 		l[i] = new double[n];
 		u[i] = new double[n];
 	}
 	
 	int *ind = new int [n];
-	int i,j,k;
 	for (i = 0 ; i < n; ++i) {
 		ind[i] = i;
 	}
@@ -102,6 +104,13 @@ void answer(int n, double **&a, double *&b, double *&x) {
 			cout << "singular";
 			return ;
 		}
+		for ( i = k + 1; i < n; ++i) {
+			u[ind[k]][i] = a[k][i];
+			for (j = 0; j<= k - 1; ++j) {
+				u[ind[k]][i] -= l[ind[k]][j] * u[ind[j]][i];
+			}
+			u[ind[k]][i] /= l[ind[k]][k];
+		}
 	}
 
 	/*
@@ -126,10 +135,11 @@ void answer(int n, double **&a, double *&b, double *&x) {
 			u[k][i] = (a[k][i] - sum)/l[k][k];
 		}
 
-	}
+	}*/
+	printmatr(ind,n);
 	printmatr(l,n);
 	printmatr(u,n);
-	multmatr(l,u,n);*/
+	//multmatr(l,u,n);
 }
 
 int main(){
