@@ -63,6 +63,29 @@ void gauss(int n, double **&a, double *&b, double *&x, int *&ind) {
 	delete []y;
 }
 
+double norm(int n, double **&a, double *&b, double *&x, int *&ind) {
+	int i, j, k;
+	double norm = 0;
+	double sum;
+	for(i = 0 ; i < n; ++i) {
+		sum = 0;
+		for(k = 0; k < n; ++k) {
+			double sum1 = 0;
+			for( j = 0 ; j <= i && j <= k; ++j) {
+				if ( j == k) {
+					sum1 += a[ind[i]][j];
+				} else {
+					sum1 += a[ind[i]][j] * a[ind[j]][k];
+				}
+			}
+			sum += sum1 * x[k];
+		}
+		sum -= b[ind[i]];
+		norm += sum * sum;
+	}
+	return sqrt(norm);
+}
+
 void answer(int n, double **&a, double *&b, double *&x) {
 	
 	int i,j,k;
@@ -128,9 +151,6 @@ void answer(int n, double **&a, double *&b, double *&x) {
 			}
 			cout << endl;
 		}
-		cout << "\n\n";
-		cout << "X: \n";
-		printmatr(x,n);
 	} else {
 		ofstream fout("output.txt"); 
 		fout << "L: \n";
@@ -158,14 +178,12 @@ void answer(int n, double **&a, double *&b, double *&x) {
 			}
 			fout << endl;
 		}
-		fout << "\n\n";
-		fout << "X: \n";
-		for (i = 0; i < n; ++i) {
-			fout << setw(w) << x[i] << endl;
-		}
 	}
-	
-	dif(n, a, b, x, ind) ;
+	cout << "\n\n";
+	cout << "X: \n";
+	printmatr(x,n);
+
+	cout << endl << "Norm : " << norm(n, a, b, x, ind) ;
 
 }
 
