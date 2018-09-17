@@ -6,7 +6,7 @@
 
 
 using namespace std;
-const int w = 3;
+const int w = 8;
 const double eps = FLT_EPSILON;
 
 void inline freematr(double **&a, int n) {
@@ -68,6 +68,26 @@ void multmatr(double **&a, double **&b, int n) {
 }
 
 
+void gauss(int n, double **&a, double *&b, double *&x, int *&ind) {
+	double *y = new double[n];
+	int i,j;
+	for(i = 0 ; i < n; ++i) {
+		y[i] = b[ind[i]];
+		for(j = 0 ; j < i; ++j) {
+			y[i] -= a[ind[i]][j] * y[j];
+		}
+		y[i] /= a[ind[i]][i];
+	}
+	printmatr(y,n);
+	for ( i = n - 1; i >= 0; --i) {
+		x[i] = y[i];
+		for (j = n - 1; j > i; --j) {
+			x[i] -= a[ind[i]][j] * x[j];
+		}
+	}
+	printmatr(x,n);
+}
+
 void answer(int n, double **&a, double *&b, double *&x) {
 	/*double **l = new double *[n];
 	double **u = new double *[n];
@@ -76,7 +96,6 @@ void answer(int n, double **&a, double *&b, double *&x) {
 		u[i] = new double[n];
 	}*/
 	int i,j,k;
-	
 	int *ind = new int [n];
 	for (i = 0 ; i < n; ++i) {
 		ind[i] = i;
@@ -111,6 +130,7 @@ void answer(int n, double **&a, double *&b, double *&x) {
 		}
 	}
 
+	gauss(n, a, b, x, ind);
 	/*
 	for(i = 0 ; i < n; ++i) {
 		l[i][0] = a[i][0];
@@ -134,8 +154,9 @@ void answer(int n, double **&a, double *&b, double *&x) {
 		}
 
 	}*/
-	//printmatr(ind,n);
-	//printmatr(a,n);
+	printmatr(ind,n);
+	printmatr(a,n);
+	printmatr(b,n);
 	//multmatr(l,u,n);
 }
 
