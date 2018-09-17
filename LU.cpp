@@ -9,13 +9,6 @@ using namespace std;
 const int w = 8;
 const double eps = FLT_EPSILON;
 
-void inline freematr(double **&a, int n) {
-	int i;
-	for(i = 0; i < n; ++i) {
-		delete[] a[i];
-	}
-	delete[] a;
-}
 
 
 void freemem(double **&a, double *&b, int n){
@@ -50,23 +43,6 @@ double func(int i,int j) {
 	return 	(i + 1) * (i + 1) * (j + 1)- i;
 }
 
-void multmatr(double **&a, double **&b, int n) {
-	double **c = new double*[n];
-	int i,j,k;
-	for (i =0; i < n; ++i) {
-		c[i] = new double[n];
-		for (k = 0 ; k < n; ++k) {
-			c[i][k] = 0;
-			for (j = 0 ;  j < n; ++j){
-				c[i][k] += a[i][j] * b[j][k];
-			}
-		}
-
-	}
-	printmatr(c,n);
-	freematr(c,n);
-}
-
 
 void gauss(int n, double **&a, double *&b, double *&x, int *&ind) {
 	double *y = new double[n];
@@ -78,23 +54,17 @@ void gauss(int n, double **&a, double *&b, double *&x, int *&ind) {
 		}
 		y[i] /= a[ind[i]][i];
 	}
-	printmatr(y,n);
 	for ( i = n - 1; i >= 0; --i) {
 		x[i] = y[i];
 		for (j = n - 1; j > i; --j) {
 			x[i] -= a[ind[i]][j] * x[j];
 		}
 	}
-	printmatr(x,n);
+	delete []y;
 }
 
 void answer(int n, double **&a, double *&b, double *&x) {
-	/*double **l = new double *[n];
-	double **u = new double *[n];
-	for(i = 0; i < n; ++i) {
-		l[i] = new double[n];
-		u[i] = new double[n];
-	}*/
+	
 	int i,j,k;
 	int *ind = new int [n];
 	for (i = 0 ; i < n; ++i) {
@@ -131,55 +101,94 @@ void answer(int n, double **&a, double *&b, double *&x) {
 	}
 
 	gauss(n, a, b, x, ind);
-	/*
-	for(i = 0 ; i < n; ++i) {
-		l[i][0] = a[i][0];
-		u[0][i] = a[0][i]/l[0][0];
-		u[i][i] = 1;
-	}
-	for(k = 1 ; k < n; ++k) {
-		for(i = k; i < n; ++i) {
-			sum = 0;
-			for (j = 0 ; j <= k - 1; ++j) {
-				sum += l[i][j] * u[j][k ];
-			}
-			l[i][k] = a[i][k] - sum;
-		}
-		for (i = k + 1; i < n ; ++i) {
-			sum = 0;
-			for (j = 0; j <= k - 1; ++j) {
-				sum += l[k][j] * u[j][i];
-			}
-			u[k][i] = (a[k][i] - sum)/l[k][k];
-		}
 
-	}*/
-	printmatr(ind,n);
-	printmatr(a,n);
-	printmatr(b,n);
-	//multmatr(l,u,n);
+	if (n <= 10) {
+		cout << "L: \n";
+		for (i = 0; i < n; ++i) {
+			for (j = 0; j < n; ++j) {
+				if (i >= j) {
+					cout << setw(w) << a[ind[i]][j] << ' ';
+				} else {
+					cout << setw(w) << 0 << ' ';
+				}
+			}
+			cout << endl;
+		}
+		cout << "\n\n";
+		cout << "U: \n";
+		for (i = 0; i < n; ++i) {
+			for (j = 0; j < n; ++j) {
+				if (i < j) {
+					cout << setw(w) << a[ind[i]][j] << ' ';
+				} else  if (i == j) {
+					cout << setw(w) << 1 << ' ';
+				} else {
+					cout << setw(w) << 0 << ' ';
+				}
+			}
+			cout << endl;
+		}
+		cout << "\n\n";
+		cout << "X: \n";
+		printmatr(x,n);
+	} else {
+		ofstream fout("output.txt"); 
+		fout << "L: \n";
+		for (i = 0; i < n; ++i) {
+			for (j = 0; j < n; ++j) {
+				if (i >= j) {
+					fout << setw(w) << a[ind[i]][j] << ' ';
+				} else {
+					fout << setw(w) << 0 << ' ';
+				}
+			}
+			fout << endl;
+		}
+		fout << "\n\n";
+		fout << "U: \n";
+		for (i = 0; i < n; ++i) {
+			for (j = 0; j < n; ++j) {
+				if (i < j) {
+					fout << setw(w) << a[ind[i]][j] << ' ';
+				} else  if (i == j) {
+					fout << setw(w) << 1 << ' ';
+				} else {
+					fout << setw(w) << 0 << ' ';
+				}
+			}
+			fout << endl;
+		}
+		fout << "\n\n";
+		fout << "X: \n";
+		for (i = 0; i < n; ++i) {
+			fout << setw(w) << x[i] << endl;
+		}
+	}
+	
+	dif(n, a, b, x, ind) ;
+
 }
 
 int main(){
-	cout << "size =";
 	int n;
-	cin >> n;
-	double **a = new double *[n];
-	double *b = new double[n];
-	int i,j;
-	for(i = 0; i < n; ++i) {
-		a[i] = new double[n];
-	}
+	double **a;
+	double *b;
 
-	cout << endl << "1 - fromfile, 2 - generate" << endl;
+	cout << "1 - fromfile, 2 - generate" << endl;
 	int genmatr;
 	cin >> genmatr;
 	if (genmatr == 1) {
 		ifstream fin("input.txt");
 		if (!fin.is_open()) {
 			cout << "cant open input.txt" << endl;
-			freemem(a,b,n);
 			return 1;
+		}
+		fin >> n;
+		a = new double *[n];
+		b = new double[n];
+		int i,j;
+		for(i = 0; i < n; ++i) {
+			a[i] = new double[n];
 		}
 		for (i = 0; i < n; i++) {
 			for (j = 0; j < n; j++) {
@@ -190,20 +199,28 @@ int main(){
 		//printmatr(a,n);
 		//printmatr(b,n);
 	} else {
-		double sum;
+		cout << "size = ";
+		cin >> n;
+		a = new double *[n];
+		b = new double[n];
+		int i,j;
+		for(i = 0; i < n; ++i) {
+			a[i] = new double[n];
+		}
 		for (i = 0; i < n; i++) {
-			sum = 0;
+			b[i] = 0;
 			for (j = 0; j < n; j++) {
 				a[i][j] = func(i,j);
-				sum += a[i][j];
+				b[i] += a[i][j];
 			}
-			b[i] = sum;
 		}
 		printmatr(a,n);
-		//printmatr(b,n);
+		printmatr(b,n);
 	}
-
+	//printmatr(a,n);
 	double *x = new double[n];
 	answer(n, a, b, x);
+	delete []x;
+	freemem(a,b,n);
 	return 0;
 }
